@@ -1,0 +1,29 @@
+## CirclCI configuration
+
+machine:
+  timezone:
+    America/New_York
+  services:
+    - docker
+
+general:
+  artifacts:
+    - "${HOME}/dist"
+
+dependencies:
+  pre:
+    - sudo apt-get update
+    - sudo apt-get -y install realpath
+    - sudo pip install awscli
+
+test:
+  override:
+    - ${HOME}/${CIRCLE_PROJECT_REPONAME}/build.sh
+
+deployment:
+  production:
+    tag: /release-.*/
+    owner: [__GITHUB_ORG__]
+    commands:
+      - ${HOME}/${CIRCLE_PROJECT_REPONAME}/push_image.sh
+      - ${HOME}/${CIRCLE_PROJECT_REPONAME}/deploy.sh
